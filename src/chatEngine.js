@@ -64,11 +64,16 @@ export class ChatEngine {
 
     // Load the model into memory
     this._emitStatus("loading", `Loading ${this.modelAlias} into memory...`);
-    await this.model.load();
+    await this.model.load({ provider: config.provider });
+
 
     // Create the native chat client with performance settings pre-configured
     this.chatClient = this.model.createChatClient();
     this.chatClient.settings.temperature = 0.1; // Low for deterministic, safety-critical responses
+     if (config.compactMode) {
+    this.setCompactMode(true);
+    this.chatClient.settings.maxTokens = 512; // GPU belleği dostu
+  }
     this._emitStatus("ready", `Model ready: ${this.modelAlias}`);
 
     // Open the local vector store
@@ -80,6 +85,7 @@ export class ChatEngine {
       console.warn("[ChatEngine] WARNING: No documents ingested. Run 'npm run ingest' first.");
     }
   }
+ 
 
   /** Expose the vector store for direct operations (e.g. upload ingestion). */
   getStore() {
@@ -139,7 +145,7 @@ export class ChatEngine {
     ];
 
     // 3. Call the local model via the native chat client
-    this.chatClient.settings.maxTokens = this.compactMode ? 512 : 1024;
+    this.chatClient.settings.maxTokens = 512;
     const response = await this.chatClient.completeChat(messages);
 
     return {

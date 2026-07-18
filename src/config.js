@@ -7,8 +7,9 @@ const ROOT = path.resolve(__dirname, "..");
 
 export const config = {
   // Model
-  model: "phi-3.5-mini",
-
+  model: "qwen2.5-coder-0.5b",
+ provider: "dml",
+compactMode: true,
   // RAG
   docsDir: path.join(ROOT, "docs"),
   dbPath: path.join(ROOT, "data", "rag.db"),

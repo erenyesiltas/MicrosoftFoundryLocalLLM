@@ -217,6 +217,7 @@ async function start() {
 
   // Initialize the engine (downloads model if needed, loads it)
   await engine.init();
+  engine.setCompactMode(true);
   engineReady = true;
   broadcastStatus({ phase: "ready", message: "Ready" });
 
